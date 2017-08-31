@@ -62,11 +62,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
 
         mShoppingListAdapter = new ShoppingListAdapter(this,cursor,this);
         mShoppingListAdapter.setTextSize(textSize);
-
         shoppingListView.setAdapter(mShoppingListAdapter);
-
-
-
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
             @Override
@@ -99,9 +95,21 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
     }
 
     private void getTextSizeFromPrefs(SharedPreferences sharedPreferences) {
-        textSize = Integer.parseInt(
-            sharedPreferences.getString(getString(R.string.pref_text_size_key), getString(R.string.pref_text_size_default))
-        );
+        String textSizeString =
+
+            sharedPreferences.getString(getString(R.string.pref_text_size_key), getString(R.string.pref_text_size_default));
+
+        if (textSizeString.equals(
+                getResources().getString(R.string.pref_text_size_value_large)
+        )) {
+            textSize = Integer.parseInt(getResources().getString(R.string.pref_text_size_large));
+        } else if (textSizeString.equals(
+                getResources().getString(R.string.pref_text_size_value_small)
+        )) {
+            textSize = Integer.parseInt(getResources().getString(R.string.pref_text_size_small));
+        } else  {
+            textSize = Integer.parseInt(getResources().getString(R.string.pref_text_size_medium));
+        }
     }
 
     @Override

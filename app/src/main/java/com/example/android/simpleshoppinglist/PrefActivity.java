@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,13 +19,12 @@ public class PrefActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.preferences);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ActionBar actionBar = this.getSupportActionBar();
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new PrefFragment())
+                .commit();
 
-        if (actionBar!=null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     @Override

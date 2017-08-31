@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="@string/pref_medium_text_size"
+        android:entries="@array/pref_text_size_labels"
+        android:entryValues="@array/pref_text_size_values"
+        android:key="@string/pref_text_size_key"
+        android:title="@string/pref_text_size_label" />
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/pref_delete_on_tap_default"
+        android:key="@string/pref_delete_on_tap_key"
+        android:title="@string/pref_delete_on_tap_label" />
+
+</PreferenceScreen>

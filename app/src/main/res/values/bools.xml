@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="pref_delete_on_tap_default">@bool/pref_delete_on_tap_false</bool>
+    <bool name="pref_delete_on_tap_false">false</bool>
+    <bool name="pref_delete_on_tap_true">true</bool>
+</resources>
