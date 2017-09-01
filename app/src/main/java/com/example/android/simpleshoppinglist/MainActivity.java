@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity
 
         ShoppingListHelper shoppingListDbHelper = new ShoppingListHelper(this);
 
-
         mDb = shoppingListDbHelper.getWritableDatabase();
         Cursor cursor;
 
@@ -54,8 +53,6 @@ public class MainActivity extends AppCompatActivity
             mDb = shoppingListDbHelper.getWritableDatabase();
             cursor = DatabaseOperations.getCursor(mDb);
         }
-
-
 
         mShoppingListAdapter = new ShoppingListAdapter(this,cursor,this);
         shoppingListView.setAdapter(mShoppingListAdapter);
@@ -79,19 +76,6 @@ public class MainActivity extends AppCompatActivity
         ).attachToRecyclerView(shoppingListView);
     }
 
-    private void setupSharedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        getTapActionsFromPrefs(sharedPreferences);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-
-    }
-
-    private void getTapActionsFromPrefs(SharedPreferences sharedPreferences) {
-        deleteOnTap =sharedPreferences.getBoolean(getString(R.string.pref_delete_on_tap_key),
-                getResources().getBoolean(R.bool.pref_delete_on_tap_default));
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -102,9 +86,6 @@ public class MainActivity extends AppCompatActivity
         }
         return super.onCreateOptionsMenu(menu);
     }
-
-
-
 
     @Override
     protected void onResume() {
@@ -140,12 +121,23 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void setupSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        getTapActionsFromPrefs(sharedPreferences);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+    }
+
+    private void getTapActionsFromPrefs(SharedPreferences sharedPreferences) {
+        deleteOnTap =sharedPreferences.getBoolean(getString(R.string.pref_delete_on_tap_key),
+                getResources().getBoolean(R.bool.pref_delete_on_tap_default));
+    }
+
     public void addToShoppingList(View view) {
         if (mItemEditText.getText().length()==0) return;
         DatabaseOperations.addNewItem(mDb, mShoppingListAdapter, mItemEditText.getText().toString());
         mItemEditText.setText("");
     }
-
 
     @Override
     public void onItemClick(int clickedItem) {
@@ -156,15 +148,12 @@ public class MainActivity extends AppCompatActivity
 
     public void defocusTextEdit () {
 
-
         InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(this.INPUT_METHOD_SERVICE);
         if (getCurrentFocus()!=null) {
             inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
         }
-
-
         mItemEditText.clearFocus();
     }
 
@@ -180,8 +169,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-    public void defocusTextEdit(View view) {
+    public void defocusTextEditProcess(View view) {
         defocusTextEdit();
     }
 }

@@ -7,7 +7,7 @@
     tools:context="com.example.android.simpleshoppinglist.MainActivity"
     android:background="@color/colorBackground"
     android:orientation="vertical"
-    android:onClick="defocusTextEdit">
+    android:onClick="defocusTextEditProcess">
 
     <LinearLayout
         android:layout_width="0dp"
