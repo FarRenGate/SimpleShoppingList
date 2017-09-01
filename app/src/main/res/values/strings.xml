@@ -6,26 +6,6 @@
     <string name="delete_all">Delete all</string>
     <string name="settings">Settings</string>
 
-    <string name="pref_medium_text_size">Medium</string>
-
-    <string name="pref_text_size_key">text_size</string>
-
-    <string name="pref_text_size_label">Text size</string>
-
-    <string name="pref_text_size_label_small">Small</string>
-    <string name="pref_text_size_label_medium">Medium</string>
-    <string name="pref_text_size_label_large">Large</string>
-
-    <string name="pref_text_size_value_small">Small</string>
-    <string name="pref_text_size_value_medium">Medium</string>
-    <string name="pref_text_size_value_large">Large</string>
-
-    <string name="pref_text_size_default">@string/pref_text_size_medium</string>
-
-    <string name="pref_text_size_small">11</string>
-    <string name="pref_text_size_medium">22</string>
-    <string name="pref_text_size_large">33</string>
-
     <string name="pref_delete_on_tap_key">delete_on_tap</string>
     <string name="pref_delete_on_tap_label">Delete item on tap</string>
     <string name="settings_label">Settings</string>

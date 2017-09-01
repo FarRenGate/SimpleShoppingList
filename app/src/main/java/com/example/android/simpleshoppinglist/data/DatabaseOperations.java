@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.android.simpleshoppinglist.ShoppingListAdapter;
-import com.example.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry;
+
 
 import static com.example.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry.*;
 
@@ -69,6 +69,22 @@ public class DatabaseOperations {
     public static void removeCrossedItems(SQLiteDatabase db, ShoppingListAdapter adapter) {
         db.delete(TABLE_NAME, COLUMN_CROSSED + "=?", new String[] { "1" });
         adapter.updateList(getCursor(db));
+    }
+
+    public static int numberOfCrossedItems(SQLiteDatabase db) {
+        Cursor c = db.query(
+                TABLE_NAME,
+                new String[] {COLUMN_CROSSED},
+                COLUMN_CROSSED + "=?",
+                new String[] {"1"},
+                null,
+                null,
+                null
+        );
+        int result = c.getCount();
+        c.close();
+        return result;
+
     }
 
     public static void removeAllItems(SQLiteDatabase db, ShoppingListAdapter adapter) {
