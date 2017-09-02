@@ -6,7 +6,10 @@
     android:id="@+id/tv_list_element"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
+    android:paddingLeft="@dimen/rv_padding_left_right"
+    android:paddingRight="@dimen/rv_padding_left_right"
+    android:paddingTop="@dimen/rv_padding_top_bottom"
+    android:paddingBottom="@dimen/rv_padding_top_bottom"
     android:textColor="@android:color/black"/>
 
     <View

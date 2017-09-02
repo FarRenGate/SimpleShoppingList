@@ -8,5 +8,9 @@
 
     <string name="pref_delete_on_tap_key">delete_on_tap</string>
     <string name="pref_delete_on_tap_label">Delete item on tap</string>
+    <string name="pref_delete_on_tap_hint_on">Swipe or tap to delete</string>
+    <string name="pref_delete_on_tap_hint_off">Swipe to delete, tap to cross</string>
     <string name="settings_label">Settings</string>
+
+
 </resources>

@@ -29,7 +29,9 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/add_item_hint"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@color/colorBackground"
+            android:textColorHint="@color/colorBackground"/>
 
         <Button
             android:id="@+id/b_addToShoppingList"
@@ -37,6 +39,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:onClick="addToShoppingList"
+            android:textColor="@color/colorBackground"
             android:text="@string/add_button" />
     </LinearLayout>
 
