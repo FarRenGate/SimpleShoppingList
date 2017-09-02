@@ -3,4 +3,8 @@
     <bool name="pref_delete_on_tap_default">@bool/pref_delete_on_tap_false</bool>
     <bool name="pref_delete_on_tap_false">false</bool>
     <bool name="pref_delete_on_tap_true">true</bool>
+
+    <bool name="pref_dark_theme_default">@bool/pref_dark_theme_off</bool>
+    <bool name="pref_dark_theme_off">false</bool>
+    <bool name="pref_dark_theme_on">true</bool>
 </resources>

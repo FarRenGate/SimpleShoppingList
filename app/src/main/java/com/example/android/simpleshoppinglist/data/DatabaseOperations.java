@@ -26,12 +26,15 @@ public class DatabaseOperations {
     }
 
     public static void addNewItem (SQLiteDatabase db, ShoppingListAdapter adapter, String itemString) {
-        String[] items = itemString.split(",");
+        String[] items = itemString.split(",|\\.");
         ContentValues cv = new ContentValues();
         for (String item: items) {
+            if (item.isEmpty()) {
+                continue;
+            }
             cv.put(COLUMN_ITEM, item.trim());
             cv.put(COLUMN_CROSSED, 0);
-            db.insert(TABLE_NAME,null,cv);
+            db.insert(TABLE_NAME, null, cv);
         }
         adapter.updateList(getCursor(db));
     }
