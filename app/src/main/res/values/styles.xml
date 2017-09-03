@@ -10,5 +10,11 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <style name="EditTextTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/colorBackground</item>
+    </style>
+
 
 </resources>

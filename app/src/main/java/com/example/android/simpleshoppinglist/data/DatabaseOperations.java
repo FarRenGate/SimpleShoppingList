@@ -29,10 +29,11 @@ public class DatabaseOperations {
         String[] items = itemString.split(",|\\.");
         ContentValues cv = new ContentValues();
         for (String item: items) {
+            item=item.trim();
             if (item.isEmpty()) {
                 continue;
             }
-            cv.put(COLUMN_ITEM, item.trim());
+            cv.put(COLUMN_ITEM, item);
             cv.put(COLUMN_CROSSED, 0);
             db.insert(TABLE_NAME, null, cv);
         }

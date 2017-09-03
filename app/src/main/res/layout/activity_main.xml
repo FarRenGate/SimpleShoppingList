@@ -7,7 +7,7 @@
     tools:context="com.example.android.simpleshoppinglist.MainActivity"
     android:background="@color/colorBackground"
     android:orientation="vertical"
-    android:onClick="defocusTextEditProcess">
+    android:onClick="defocusEditTextProcess">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_ShoppingList"
@@ -44,7 +44,8 @@
             android:hint="@string/add_item_hint"
             android:inputType="textPersonName"
             android:textColor="@color/colorBackground"
-            android:textColorHint="@color/colorBackground"/>
+            android:textColorHint="@color/colorBackground"
+            android:theme="@style/EditTextTheme"/>
 
         <Button
             android:id="@+id/b_addToShoppingList"

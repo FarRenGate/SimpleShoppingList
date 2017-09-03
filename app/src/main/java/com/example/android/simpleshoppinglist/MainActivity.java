@@ -1,22 +1,28 @@
 package com.example.android.simpleshoppinglist;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.simpleshoppinglist.data.DatabaseOperations;
 import com.example.android.simpleshoppinglist.data.ShoppingListHelper;
@@ -43,6 +49,27 @@ public class MainActivity extends AppCompatActivity
         mItemEditText = (EditText) this.findViewById(R.id.et_addItem);
         shoppingListView.setLayoutManager(new LinearLayoutManager(this));
 
+
+        mItemEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                return false;
+            }
+        });
+
+        mItemEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Button addButton = (Button) findViewById(R.id.b_addToShoppingList);
+                    addButton.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
         ShoppingListHelper shoppingListDbHelper = new ShoppingListHelper(this);
 
         mDb = shoppingListDbHelper.getWritableDatabase();
@@ -68,7 +95,6 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                defocusTextEdit();
                 long id = (long) viewHolder.itemView.getTag();
                 DatabaseOperations.removeItem(mDb,id);
                 mShoppingListAdapter.updateList(DatabaseOperations.getCursor(mDb));
@@ -77,6 +103,7 @@ public class MainActivity extends AppCompatActivity
 
         ).attachToRecyclerView(shoppingListView);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,6 +124,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 DatabaseOperations.removeCrossedItems(mDb, mShoppingListAdapter);
             } catch (Exception e) {
+                Toast.makeText(this,"Error in deleting items",Toast.LENGTH_SHORT).show();
                 Log.d(TAG,"Error in deleting");
             }
         }
@@ -106,7 +134,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        defocusTextEdit();
+        defocusEditText(mItemEditText);
         int menuId = item.getItemId();
         switch (menuId) {
             case R.id.m_delete_crossed:
@@ -143,12 +171,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemClick(int clickedItem) {
-        defocusTextEdit();
+        if (mItemEditText.hasFocus()) {
+            defocusEditText(mItemEditText);
+            return;
+        }
         View view = shoppingListView.findViewHolderForAdapterPosition(clickedItem).itemView;
         DatabaseOperations.crossItem(mDb, mShoppingListAdapter, (long) view.getTag(),deleteOnTap);
     }
 
-    public void defocusTextEdit () {
+    public void defocusEditText(EditText editText) {
 
         InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(this.INPUT_METHOD_SERVICE);
@@ -156,7 +187,7 @@ public class MainActivity extends AppCompatActivity
             inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
         }
-        mItemEditText.clearFocus();
+        editText.clearFocus();
     }
 
     @Override
@@ -171,7 +202,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void defocusTextEditProcess(View view) {
-        defocusTextEdit();
+    public void defocusEditTextProcess(View view) {
+        defocusEditText(mItemEditText);
     }
 }
