@@ -1,6 +1,5 @@
-package com.example.android.simpleshoppinglist;
+package com.OlegKozlov.android.simpleshoppinglist;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -11,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,14 +22,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.simpleshoppinglist.data.DatabaseOperations;
-import com.example.android.simpleshoppinglist.data.ShoppingListHelper;
+import com.OlegKozlov.android.simpleshoppinglist.data.DatabaseOperations;
+import com.OlegKozlov.android.simpleshoppinglist.data.ShoppingListHelper;
 
 public class MainActivity extends AppCompatActivity
         implements ShoppingListAdapter.ListItemClickListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String TAG = "ShoppingListErrorLog";
     private boolean deleteOnTap;
     private ShoppingListAdapter mShoppingListAdapter;
     private SQLiteDatabase mDb;
@@ -125,7 +122,6 @@ public class MainActivity extends AppCompatActivity
                 DatabaseOperations.removeCrossedItems(mDb, mShoppingListAdapter);
             } catch (Exception e) {
                 Toast.makeText(this,"Error in deleting items",Toast.LENGTH_SHORT).show();
-                Log.d(TAG,"Error in deleting");
             }
         }
         invalidateOptionsMenu();

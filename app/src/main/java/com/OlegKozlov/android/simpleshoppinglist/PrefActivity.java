@@ -1,4 +1,4 @@
-package com.example.android.simpleshoppinglist;
+package com.OlegKozlov.android.simpleshoppinglist;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

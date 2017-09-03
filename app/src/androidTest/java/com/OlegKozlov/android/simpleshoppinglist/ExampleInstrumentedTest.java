@@ -1,4 +1,4 @@
-package com.example.android.simpleshoppinglist;
+package com.OlegKozlov.android.simpleshoppinglist;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

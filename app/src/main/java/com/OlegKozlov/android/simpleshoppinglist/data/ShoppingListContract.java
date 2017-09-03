@@ -1,4 +1,4 @@
-package com.example.android.simpleshoppinglist.data;
+package com.OlegKozlov.android.simpleshoppinglist.data;
 
 import android.provider.BaseColumns;
 

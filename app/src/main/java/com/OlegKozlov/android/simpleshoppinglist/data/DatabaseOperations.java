@@ -1,13 +1,13 @@
-package com.example.android.simpleshoppinglist.data;
+package com.OlegKozlov.android.simpleshoppinglist.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.android.simpleshoppinglist.ShoppingListAdapter;
+import com.OlegKozlov.android.simpleshoppinglist.ShoppingListAdapter;
 
 
-import static com.example.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry.*;
+import static com.OlegKozlov.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry.*;
 
 /**
  * Created by User on 22/08/17.

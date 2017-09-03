@@ -1,10 +1,10 @@
-package com.example.android.simpleshoppinglist.data;
+package com.OlegKozlov.android.simpleshoppinglist.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry;
+import com.OlegKozlov.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry;
 
 
 /**

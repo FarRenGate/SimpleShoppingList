@@ -1,4 +1,4 @@
-package com.example.android.simpleshoppinglist;
+package com.OlegKozlov.android.simpleshoppinglist;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,10 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.simpleshoppinglist.data.ShoppingListContract;
-import com.example.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry;
-
-import static com.example.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry.*;
+import static com.OlegKozlov.android.simpleshoppinglist.data.ShoppingListContract.ShoppingListEntry.*;
 
 /**
  * Created by User on 22/08/17.
