@@ -47,13 +47,14 @@ public class MainActivity extends AppCompatActivity
         shoppingListView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        mItemEditText.setOnKeyListener(new View.OnKeyListener() {
+       /* mItemEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 return false;
             }
-        });
+        });*/
 
+       //needed to implement "enter" behavior (send line to the list) but keep the keyboard on screen
         mItemEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity
         mShoppingListAdapter = new ShoppingListAdapter(this,cursor,this);
         shoppingListView.setAdapter(mShoppingListAdapter);
 
+        //implements swipe
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
@@ -176,7 +178,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void defocusEditText(EditText editText) {
-
         InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(this.INPUT_METHOD_SERVICE);
         if (getCurrentFocus()!=null) {
