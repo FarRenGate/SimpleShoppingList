@@ -18,7 +18,7 @@ import static com.OlegKozlov.android.simpleshoppinglist.data.ShoppingListContrac
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ShoppingListViewHolder> {
 
-    private static final int DEFAULT_TEXT_SIZE=22;
+    private static final int DEFAULT_TEXT_SIZE = 22;
 
     private Context mContext;
     private Cursor mCursor;
@@ -26,30 +26,30 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     final private ListItemClickListener mOnClickListener;
     final private ListItemLongClickListener mOnLongClickListener;
+    private int changedItemPosition = -1;
 
     public interface ListItemClickListener {
-        void onItemClick (int clickedItem);
+        void onItemClick(int clickedItem);
     }
 
     public interface ListItemLongClickListener {
-        void onItemLongClick (int clickedItem);
+        void onItemLongClick(int clickedItem);
     }
-
 
 
     public ShoppingListAdapter(Context context, Cursor cursor, ListItemClickListener clickListener,
                                ListItemLongClickListener longClickListener) {
-        mContext=context;
-        mCursor=cursor;
-        mOnClickListener=clickListener;
-        mOnLongClickListener=longClickListener;
-        textSize=DEFAULT_TEXT_SIZE;
+        mContext = context;
+        mCursor = cursor;
+        mOnClickListener = clickListener;
+        mOnLongClickListener = longClickListener;
+        textSize = DEFAULT_TEXT_SIZE;
     }
 
     @Override
     public ShoppingListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.shopping_list_item,parent,false);
+        View view = inflater.inflate(R.layout.shopping_list_item, parent, false);
         return new ShoppingListViewHolder(view);
     }
 
@@ -59,7 +59,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         if (!mCursor.moveToPosition(position))
             return;
 
-        String listItem=mCursor.getString(mCursor.getColumnIndex(COLUMN_ITEM));
+        String listItem = mCursor.getString(mCursor.getColumnIndex(COLUMN_ITEM));
         int crossed = mCursor.getInt(mCursor.getColumnIndex(COLUMN_CROSSED));
         long id = mCursor.getLong(mCursor.getColumnIndex(_ID));
 
@@ -68,7 +68,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         holder.itemTextView.setTextSize(textSize);
 
-        if (crossed==1) {
+        if (crossed == 1) {
             holder.itemTextView.setPaintFlags(holder.itemTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.itemView.setBackgroundColor(
                     ContextCompat.getColor(holder.itemView.getContext(), R.color.colorBackgroundCrossedItem));
@@ -78,9 +78,12 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     ContextCompat.getColor(holder.itemView.getContext(), R.color.colorBackground));
         }
 
+        if (position == changedItemPosition) {
+            holder.itemView.setBackgroundColor(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.colorBackgroundEditedItem));
+        }
+
     }
-
-
 
 
     @Override
@@ -89,7 +92,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
     public class ShoppingListViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener, View.OnLongClickListener{
+            implements View.OnClickListener, View.OnLongClickListener {
 
         TextView itemTextView;
 
@@ -118,12 +121,20 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
 
-
-    public void updateList (Cursor newCursor) {
-        if (mCursor!=null) mCursor.close();
-        mCursor=newCursor;
-        if (newCursor!=null)
+    public void updateList(Cursor newCursor) {
+        if (mCursor != null) mCursor.close();
+        mCursor = newCursor;
+        if (newCursor != null)
             this.notifyDataSetChanged();
     }
 
+    public void selectEditedItem(int position) {
+        changedItemPosition = position;
+        notifyItemChanged(position);
+    }
+
+    public void deselectEditedItem() {
+        changedItemPosition = -1;
+        notifyDataSetChanged();
+    }
 }

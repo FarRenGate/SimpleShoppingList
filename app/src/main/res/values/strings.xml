@@ -3,6 +3,7 @@
     <string name="delete_crossed">Clean up</string>
     <string name="add_item_hint">Add item</string>
     <string name="add_button">Add</string>
+    <string name="replace_button">Edit</string>
     <string name="delete_all">Delete all</string>
     <string name="settings">Settings</string>
 

@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorBackgroundCrossedItem">#C5CAE9</color>
+    <color name="colorBackgroundEditedItem">#ffcdd2</color>
     <color name="colorBackground">#FAFAFA</color>
     <color name="colorTextEdit">#212121</color>
     <color name="colorSeparator">#b0bec5</color>

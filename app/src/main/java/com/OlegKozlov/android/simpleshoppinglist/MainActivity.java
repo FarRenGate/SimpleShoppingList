@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,9 +38,25 @@ public class MainActivity extends AppCompatActivity
     private ShoppingListAdapter mShoppingListAdapter;
     private SQLiteDatabase mDb;
     private EditText mItemEditText;
-    RecyclerView shoppingListView;
+    RecyclerView mShoppingListView;
+    LinearLayoutManager mLayoutManager;
+
     private boolean editTextMode;
     private long changedItemId;
+    private int changedItemPosition;
+    private String charactersToFilter = ".,";
+
+    private Button mAddButton;
+
+    private InputFilter filterWhenEditing = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (source!=null && charactersToFilter.contains(""+source)) {
+                return "";
+            }
+            return null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +65,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        shoppingListView = (RecyclerView)  this.findViewById(R.id.rv_ShoppingList);
+        mShoppingListView = (RecyclerView)  this.findViewById(R.id.rv_ShoppingList);
         mItemEditText = (EditText) this.findViewById(R.id.et_addItem);
-        shoppingListView.setLayoutManager(new LinearLayoutManager(this));
+        mAddButton = (Button) this.findViewById(R.id.b_addToShoppingList);
+        mLayoutManager = new LinearLayoutManager(this);
+        mShoppingListView.setLayoutManager(mLayoutManager);
 
 
        /* mItemEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -85,10 +107,19 @@ public class MainActivity extends AppCompatActivity
         }
 
         mShoppingListAdapter = new ShoppingListAdapter(this,cursor,this, this);
-        shoppingListView.setAdapter(mShoppingListAdapter);
+        mShoppingListView.setAdapter(mShoppingListAdapter);
 
         //implements swipe
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                if (editTextMode) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                                   RecyclerView.ViewHolder target) {
@@ -103,12 +134,34 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        ).attachToRecyclerView(shoppingListView);
+        ).attachToRecyclerView(mShoppingListView);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mShoppingListView.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){
+
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    Log.i("Scroll", "Layout changed");
+                    if (bottom<oldBottom) {
+                        if (editTextMode) {
+                            mShoppingListView.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mShoppingListView.scrollToPosition(changedItemPosition);
+                                }
+                            }, 100);
+                            Log.i("Scroll", "Scrolled to position " + changedItemPosition);
+                        }
+                    }
+                 }
+            });
+        }
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.delete_menu,menu);
         if (deleteOnTap) {
@@ -135,6 +188,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (editTextMode) {
+            return super.onOptionsItemSelected(item);
+        }
         defocusEditText(mItemEditText);
         int menuId = item.getItemId();
         switch (menuId) {
@@ -165,14 +221,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addToShoppingList(View view) {
-        if (mItemEditText.getText().length()==0) return;
+        if (mItemEditText.getText().toString().trim().length()==0) return;
         if (editTextMode) {
             if (changedItemId!=-1) {
                 DatabaseOperations.replaceItem(mDb, mShoppingListAdapter,
                         mItemEditText.getText().toString(), changedItemId);
-                defocusEditText(mItemEditText);
+
+                endEditing();
             }
-            changedItemId=-1;
         } else {
             DatabaseOperations.addNewItem(mDb, mShoppingListAdapter, mItemEditText.getText().toString());
         }
@@ -180,19 +236,45 @@ public class MainActivity extends AppCompatActivity
         editTextMode = false;
     }
 
+    private void endEditing() {
+        mShoppingListAdapter.deselectEditedItem();
+        changedItemId=-1;
+        changedItemPosition=-1;
+        mAddButton.setText(
+                getResources().getString(R.string.add_button)
+        );
+        defocusEditText(mItemEditText);
+        mItemEditText.setText("");
+        mItemEditText.setFilters(new InputFilter[]{});
+        editTextMode=false;
+    }
+
     @Override
     public void onItemClick(int clickedItem) {
+        if (editTextMode) {
+            return;
+        }
         if (mItemEditText.hasFocus()) {
             defocusEditText(mItemEditText);
             return;
         }
-        View view = shoppingListView.findViewHolderForAdapterPosition(clickedItem).itemView;
+        View view = mShoppingListView.findViewHolderForAdapterPosition(clickedItem).itemView;
         DatabaseOperations.crossItem(mDb, mShoppingListAdapter, (long) view.getTag(),deleteOnTap);
     }
     @Override
     public void onItemLongClick(int clickedItem) {
+        if (editTextMode) {
+            return;
+        }
+
+        mItemEditText.setFilters(new InputFilter[] {filterWhenEditing});
+        mAddButton.setText(
+            getResources().getString(R.string.replace_button)
+        );
         editTextMode = true;
-        View view = shoppingListView.findViewHolderForAdapterPosition(clickedItem).itemView;
+        View view = mShoppingListView.findViewHolderForAdapterPosition(clickedItem).itemView;
+        mShoppingListAdapter.selectEditedItem(clickedItem);
+        changedItemPosition=clickedItem;
         changedItemId =  (long) view.getTag();
         String item = DatabaseOperations.receiveItem(mDb,changedItemId);
         mItemEditText.setText(item);
@@ -201,6 +283,7 @@ public class MainActivity extends AppCompatActivity
         InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(this.INPUT_METHOD_SERVICE);
         inputManager.showSoftInput(mItemEditText,InputMethodManager.SHOW_IMPLICIT);
+        mLayoutManager.scrollToPositionWithOffset(clickedItem,0);
     }
 
     public void defocusEditText(EditText editText) {
