@@ -27,6 +27,7 @@ import com.OlegKozlov.android.simpleshoppinglist.data.ShoppingListHelper;
 
 public class MainActivity extends AppCompatActivity
         implements ShoppingListAdapter.ListItemClickListener,
+        ShoppingListAdapter.ListItemLongClickListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     private boolean deleteOnTap;
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase mDb;
     private EditText mItemEditText;
     RecyclerView shoppingListView;
+    private boolean editTextMode;
+    private long changedItemId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity
             cursor = DatabaseOperations.getCursor(mDb);
         }
 
-        mShoppingListAdapter = new ShoppingListAdapter(this,cursor,this);
+        mShoppingListAdapter = new ShoppingListAdapter(this,cursor,this, this);
         shoppingListView.setAdapter(mShoppingListAdapter);
 
         //implements swipe
@@ -163,8 +166,18 @@ public class MainActivity extends AppCompatActivity
 
     public void addToShoppingList(View view) {
         if (mItemEditText.getText().length()==0) return;
-        DatabaseOperations.addNewItem(mDb, mShoppingListAdapter, mItemEditText.getText().toString());
+        if (editTextMode) {
+            if (changedItemId!=-1) {
+                DatabaseOperations.replaceItem(mDb, mShoppingListAdapter,
+                        mItemEditText.getText().toString(), changedItemId);
+                defocusEditText(mItemEditText);
+            }
+            changedItemId=-1;
+        } else {
+            DatabaseOperations.addNewItem(mDb, mShoppingListAdapter, mItemEditText.getText().toString());
+        }
         mItemEditText.setText("");
+        editTextMode = false;
     }
 
     @Override
@@ -175,6 +188,19 @@ public class MainActivity extends AppCompatActivity
         }
         View view = shoppingListView.findViewHolderForAdapterPosition(clickedItem).itemView;
         DatabaseOperations.crossItem(mDb, mShoppingListAdapter, (long) view.getTag(),deleteOnTap);
+    }
+    @Override
+    public void onItemLongClick(int clickedItem) {
+        editTextMode = true;
+        View view = shoppingListView.findViewHolderForAdapterPosition(clickedItem).itemView;
+        changedItemId =  (long) view.getTag();
+        String item = DatabaseOperations.receiveItem(mDb,changedItemId);
+        mItemEditText.setText(item);
+        mItemEditText.requestFocus();
+        mItemEditText.setSelection(mItemEditText.getText().length());
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(this.INPUT_METHOD_SERVICE);
+        inputManager.showSoftInput(mItemEditText,InputMethodManager.SHOW_IMPLICIT);
     }
 
     public void defocusEditText(EditText editText) {
@@ -202,4 +228,6 @@ public class MainActivity extends AppCompatActivity
     public void defocusEditTextProcess(View view) {
         defocusEditText(mItemEditText);
     }
+
+
 }

@@ -25,21 +25,24 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     int textSize;
 
     final private ListItemClickListener mOnClickListener;
+    final private ListItemLongClickListener mOnLongClickListener;
 
     public interface ListItemClickListener {
         void onItemClick (int clickedItem);
     }
 
-    public void setTextSize (int textSize) {
-        this.textSize=textSize;
-        notifyDataSetChanged();
+    public interface ListItemLongClickListener {
+        void onItemLongClick (int clickedItem);
     }
 
 
-    public ShoppingListAdapter(Context context, Cursor cursor, ListItemClickListener listener) {
+
+    public ShoppingListAdapter(Context context, Cursor cursor, ListItemClickListener clickListener,
+                               ListItemLongClickListener longClickListener) {
         mContext=context;
         mCursor=cursor;
-        mOnClickListener=listener;
+        mOnClickListener=clickListener;
+        mOnLongClickListener=longClickListener;
         textSize=DEFAULT_TEXT_SIZE;
     }
 
@@ -85,7 +88,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         return mCursor.getCount();
     }
 
-    public class ShoppingListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ShoppingListViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener, View.OnLongClickListener{
 
         TextView itemTextView;
 
@@ -93,6 +97,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             super(itemView);
             itemTextView = (TextView) itemView.findViewById(R.id.tv_list_element);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
 
@@ -100,7 +105,15 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         public void onClick(View v) {
             int clickedItem = getAdapterPosition();
             mOnClickListener.onItemClick(clickedItem);
-            notifyDataSetChanged();
+            notifyItemChanged(clickedItem);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int clickedItem = getAdapterPosition();
+            mOnLongClickListener.onItemLongClick(clickedItem);
+            notifyItemChanged(clickedItem);
+            return true;
         }
     }
 

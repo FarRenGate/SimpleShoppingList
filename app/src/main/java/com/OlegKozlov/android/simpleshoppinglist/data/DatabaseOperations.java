@@ -1,6 +1,7 @@
 package com.OlegKozlov.android.simpleshoppinglist.data;
 
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -44,6 +45,15 @@ public class DatabaseOperations {
         return db.delete(TABLE_NAME, _ID+"="+id,null)>0;
     }
 
+    public static void replaceItem (SQLiteDatabase db, ShoppingListAdapter adapter, String newItem,long id) {
+        ContentValues cv = new ContentValues();
+        String whereClause = _ID + "=?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        cv.put(COLUMN_ITEM,newItem);
+        db.update(TABLE_NAME,cv, whereClause, whereArgs);
+        adapter.updateList(getCursor(db));
+    }
+
     public static void crossItem (SQLiteDatabase db, ShoppingListAdapter adapter, long id, boolean deleteOnTap) {
         if (deleteOnTap) {
             removeItem(db, id);
@@ -68,6 +78,20 @@ public class DatabaseOperations {
             adapter.updateList(getCursor(db));
             cursor.close();
         }
+    }
+
+    public static String receiveItem (SQLiteDatabase db, long id) {
+        String receivedItem = null;
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[]{COLUMN_ITEM},
+                _ID + "=?",
+                new String[]{String.valueOf(id)},
+                null,
+                null,
+                null);
+        cursor.moveToFirst();
+        receivedItem = cursor.getString(cursor.getColumnIndex(COLUMN_ITEM));
+        return receivedItem;
     }
 
     public static void removeCrossedItems(SQLiteDatabase db, ShoppingListAdapter adapter) {
