@@ -37,7 +37,7 @@
         tools:layout_conversion_absoluteY="463dp"
         android:id="@+id/linearLayout3">
 
-        <EditText
+        <com.OlegKozlov.android.simpleshoppinglist.CustomEditText
             android:id="@+id/et_addItem"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

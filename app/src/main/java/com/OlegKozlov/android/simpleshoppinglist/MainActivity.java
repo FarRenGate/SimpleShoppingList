@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
     private boolean deleteOnTap;
     private ShoppingListAdapter mShoppingListAdapter;
     private SQLiteDatabase mDb;
-    private EditText mItemEditText;
+    private CustomEditText mItemEditText;
     RecyclerView mShoppingListView;
     LinearLayoutManager mLayoutManager;
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mShoppingListView = (RecyclerView)  this.findViewById(R.id.rv_ShoppingList);
-        mItemEditText = (EditText) this.findViewById(R.id.et_addItem);
+        mItemEditText = (CustomEditText) this.findViewById(R.id.et_addItem);
         mAddButton = (Button) this.findViewById(R.id.b_addToShoppingList);
         mLayoutManager = new LinearLayoutManager(this);
         mShoppingListView.setLayoutManager(mLayoutManager);
@@ -92,6 +92,19 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        //needed to capture Back key when keyboard is open
+        mItemEditText.setKeyImeChangeListener(new CustomEditText.KeyImeChangeListener() {
+            @Override
+            public void onKeyIme(int keyCode, KeyEvent event) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                    if (editTextMode) {
+                        endEditing();
+                    } else {
+                        defocusEditText(mItemEditText);
+                    }
+                }
+            }
+        });
 
         ShoppingListHelper shoppingListDbHelper = new ShoppingListHelper(this);
 
@@ -193,7 +206,7 @@ public class MainActivity extends AppCompatActivity
         if (editTextMode) {
             return super.onOptionsItemSelected(item);
         }
-        defocusEditText(mItemEditText);
+        defocusEditTextAndHideKeyboard(mItemEditText);
         int menuId = item.getItemId();
         switch (menuId) {
             case R.id.m_delete_crossed:
@@ -229,7 +242,7 @@ public class MainActivity extends AppCompatActivity
                 DatabaseOperations.replaceItem(mDb, mShoppingListAdapter,
                         mItemEditText.getText().toString(), changedItemId);
 
-                endEditing();
+                endEditingAndHideKeyboard();
             }
         } else {
             DatabaseOperations.addNewItem(mDb, mShoppingListAdapter, mItemEditText.getText().toString());
@@ -251,13 +264,18 @@ public class MainActivity extends AppCompatActivity
         editTextMode=false;
     }
 
+    private void endEditingAndHideKeyboard() {
+        endEditing();
+        hideKeyboard();
+    }
+
     @Override
     public void onItemClick(int clickedItem) {
         if (editTextMode) {
             return;
         }
         if (mItemEditText.hasFocus()) {
-            defocusEditText(mItemEditText);
+            defocusEditTextAndHideKeyboard(mItemEditText);
             return;
         }
         View view = mShoppingListView.findViewHolderForAdapterPosition(clickedItem).itemView;
@@ -289,13 +307,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void defocusEditText(EditText editText) {
+       editText.clearFocus();
+    }
+
+    public void defocusEditTextAndHideKeyboard(EditText editText) {
+        hideKeyboard();
+        editText.clearFocus();
+    }
+
+    private void hideKeyboard() {
         InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(this.INPUT_METHOD_SERVICE);
         if (getCurrentFocus()!=null) {
             inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
         }
-        editText.clearFocus();
     }
 
     @Override
@@ -311,7 +337,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void defocusEditTextProcess(View view) {
-        defocusEditText(mItemEditText);
+        defocusEditTextAndHideKeyboard(mItemEditText);
     }
 
 
