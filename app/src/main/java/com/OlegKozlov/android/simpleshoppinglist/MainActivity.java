@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                // To prevent swiping in EditMode
                 if (editTextMode) {
                     return 0;
                 }
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity
 
         ).attachToRecyclerView(mShoppingListView);
 
+        //Needed to scroll the RV to the edited item if the keyboard appears
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             mShoppingListView.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){
 
